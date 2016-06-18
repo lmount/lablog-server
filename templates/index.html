@@ -2,8 +2,16 @@
 {% block content %}
     <h1>Say something</h1>
     <form method="post" action="{{ url_for('signup') }}">
-        <p><label>Username:</label> <input type="text" name="username"></p>
-        <p><label>Message:</label> <textarea name="message" required></textarea></p>
+        <p><label>Username:</label> <input type="text" name="username" value="{{username}}" ></p>
+        <p><label>Message:</label> <input type="text" name="query" value="{{query}}" required></p>
+        <!-- <textarea  type="text" name="query" value="{{query}}" required></textarea></p> -->
         <p><button type="submit">Send</button></p>
     </form>
+    <h1>{{ username }} said:</h1>
+    <pre>
+{{ message }}
+    </pre>
+    <p/>
+    <a href="{{ url_for('home') }}">Say something else</a>
+
 {% endblock %}
