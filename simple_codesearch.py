@@ -14,15 +14,13 @@ def home():
 @app.route('/signup', methods=['POST'])
 def signup():
     from subprocess import Popen, PIPE
-    session['username'] = request.form['username']
     session['message'] = Popen(
-        ['/usr/local/bin/ag', '--nogroup', request.form['query']], stdout=PIPE
-    ).communicate()[0]  # request.form['message']
-    # session['message'] = session['message'].replace('\n','<br/>')
-    # session['message'] = session['message'].replace('\n', Markup('<br />'))
-    return render_template('index.html', username=session['username'],
-                           message=session['message'], query=request.form['query'])
-    # return redirect(url_for('message'))
+        ['/usr/local/bin/ag', '--group', request.form['query']],
+        # ['/usr/local/bin/ag', '--nogroup', request.form['query']],
+        stdout=PIPE
+    ).communicate()[0]
+    return render_template('index.html', message=session['message'],
+                           query=request.form['query'])
 
 
 if __name__ == '__main__':
