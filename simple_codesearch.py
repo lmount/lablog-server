@@ -11,7 +11,8 @@ app.config['SECRET_KEY'] = 'F34TF$($e34D'
 
 def search_source_code(query):
     results = Popen(
-        ['/usr/local/bin/ag', '--group', request.form['query']],
+        ['/usr/local/bin/ag', '--group', '--stats',
+            '--ignore-dir', 'static', request.form['query']],
         # ['/usr/local/bin/ag', '--nogroup', request.form['query']],
         stdout=PIPE
     ).communicate()[0]
