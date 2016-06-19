@@ -1,16 +1,27 @@
 {% extends "layout.html" %}
 {% block content %}
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript">
+function update_values() {
+            $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+            var data = {"query":$('#query').val()};
+            $.post($SCRIPT_ROOT+"/_stuff",
+                data,
+                function(data) {
+                    $("#message").text(data.message)
+                }, 'json');
+        };
+</script>
     <h1>Say something</h1>
     <form method="post" action="{{ url_for('signup') }}">
         <!-- <p><label>Username:</label> <input type="text" name="username" value="{{username}}" ></p> -->
-        <p><label>Query:</label> <input type="text" name="query" value="{{query}}" required></p>
+        <p><label>Query:</label> <input type="text" id=query name="query" value="{{query}}" onkeyup="update_values()" required></p>
         <!-- <textarea  type="text" name="query" value="{{query}}" required></textarea></p> -->
         <p><button type="submit">Send</button></p>
     </form>
-    <pre>
+    <pre id=message>
 {{ message }}
     </pre>
     <p/>
-    <a href="{{ url_for('home') }}">Say something else</a>
 
 {% endblock %}
