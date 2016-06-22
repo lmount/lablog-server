@@ -4,7 +4,7 @@
     <h1><a href="/">Code Search, Live!</a></h1>
     <form method="post" action="{{ url_for('signup') }}">
         <!-- <p><label>Username:</label> <input type="text" name="username" value="{{username}}" ></p> -->
-        <p><label>Query:</label> <input type="text" id=query name="query" value="{{query}}" onkeyup="update_values()" class="input-block-level" required>
+        <p><label>Query:</label> <input type="text" id=query name="query" value="{{query}}" onkeyup="update_values()" class="input-medium search-query" required>
         <button type="submit" class="btn">Send</button></p>
     </form>
     <pre id=message>
