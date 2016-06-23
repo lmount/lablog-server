@@ -4,19 +4,15 @@ import sys
 from flask import Flask, render_template, request, \
     redirect, url_for, abort, session, Markup, jsonify
 from subprocess import Popen, PIPE
+import lablog_search as labs
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'F34TF$($e34D'
 
 
-def search_source_code(query):
-    results = Popen(
-        ['/usr/local/bin/ag', '--nogroup', '--stats',
-            '--ignore-dir', 'static', request.form['query']],
-        # ['/usr/local/bin/ag', '--nogroup', request.form['query']],
-        stdout=PIPE
-    ).communicate()[0]
-    return results
+def search_source_code(key):
+    results = "<br\><br\>".join(labs.search_for_keyword(key))
+    return unicode(results)
 
 
 @app.route('/')
