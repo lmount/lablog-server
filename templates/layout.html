@@ -50,18 +50,17 @@
         // sourceCopy MOUSE UP, Copy selected text
         $(".sourceCopy").mouseup(function () {
             var htmlString = $( this ).html().replace(/<(?:.|\n)*?>/gm, '');
-            htmlString = htmlString.slice(0, htmlString.lastIndexOf("Copy"));;
             document.execCommand("copy");
         });
 
         // buttonCopy click, copy all the text
         $(".buttonCopy").on('click', function (e) {
             e.preventDefault();
-            var htmlString = $(this).parent().html().replace(/<(?:.|\n)*?>/gm, '');
-            htmlString = htmlString.slice(0, htmlString.lastIndexOf("Copy"));;
-            $(this).parent().fadeOut(300);
-            $(this).parent().fadeIn(300);
+            var htmlString = $(this).siblings().html().replace(/<(?:.|\n)*?>/gm, '');
+            $(this).siblings().fadeOut(300);
+            $(this).siblings().fadeIn(300);
             copyToClipboard(htmlString);
+            // console.log($(this).siblings().html());
         });
 
         </script>
