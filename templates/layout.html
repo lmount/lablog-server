@@ -44,11 +44,11 @@
         // Wrap all <pre class="sourceCode"> with a field to copy
         $( "pre.sourceCode" ).contents().wrap('<p class="sourceCopy"></p>')
         // Wrap all <div class="sourceCode"> with a button to copy
-        $( "div.sourceCode" ).contents().append('<p class="text-right buttonCopy" ><button class="btn btn-default">Copy</button></p>')
+        $( "div.sourceCode" ).contents().append('<p class="text-right buttonCopy" ><button class="btn btn-default"><span class="glyphicon glyphicon-duplicate"></span></button></p>')
 
 
         // sourceCopy MOUSE UP, Copy selected text
-        $(".sourceCopy").mouseup(function () {
+        $("p.sourceCopy").mouseup(function () {
             var htmlString = $( this ).html().replace(/<(?:.|\n)*?>/gm, '');
             document.execCommand("copy");
         });

@@ -82,3 +82,4 @@ def search_for_keyword(keys):
 
 if __name__ == '__main__':
     compile_mds_in_lablog()
+    print("Made html from markdown's:", HTML_FILE)
