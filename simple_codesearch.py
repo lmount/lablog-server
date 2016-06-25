@@ -40,5 +40,11 @@ def signup():
         return render_template('index.html')
 
 
+@app.route('/rebuild', methods=['POST'])
+def rebuild():
+    labs.compile_mds_in_lablog()
+    return render_template('index.html', message="Database rebuild.")
+
+
 if __name__ == '__main__':
     app.run(debug=True)
