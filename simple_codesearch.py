@@ -5,6 +5,8 @@ from flask import Flask, render_template, request, \
     redirect, url_for, abort, session, Markup, jsonify
 from subprocess import Popen, PIPE
 import lablog_search as labs
+import urllib
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'F34TF$($e34D'
@@ -17,7 +19,17 @@ def search_source_code(key):
 
 @app.route('/')
 def home():
-    return render_template('index.html')
+    query = request.args.get('query')
+    if query is None:
+        query = request.args.get('q')
+    if query is None:
+        return render_template('index.html')
+    else:
+        message = search_source_code(query)
+        session['message'] = message
+        session['query'] = query
+        return render_template('index.html', message=message,
+                               query=query)
 
 
 @app.route('/_stuff', methods=['GET', 'POST'])
@@ -32,18 +44,14 @@ def stuff():
 
 @app.route('/signup', methods=['POST'])
 def signup():
-    if request.method == 'POST':
-        session['message'] = search_source_code(request.form['query'])
-        return render_template('index.html', message=session['message'],
-                               query=request.form['query'])
-    else:
-        return render_template('index.html')
+    return redirect('/?' + urllib.urlencode(request.form))
 
 
 @app.route('/rebuild', methods=['POST'])
 def rebuild():
     labs.compile_mds_in_lablog()
-    return render_template('index.html', message="Database rebuild.")
+    return render_template('index.html', message="Database rebuild." +
+                           session['message'], query=session['query'])
 
 
 if __name__ == '__main__':
