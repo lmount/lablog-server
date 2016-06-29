@@ -3,7 +3,6 @@
 """
 Searches the list of markdown files for entries.
 
-TODO: Move away from global parser
 
 """
 from __future__ import print_function  # In python 2.7
@@ -11,10 +10,25 @@ import sys
 from subprocess import Popen, PIPE
 from glob import glob
 from bs4 import BeautifulSoup, Comment
+import mistune as mt
+
 
 LABLOG_DIRECTORY = "/Users/lmount/Dropbox/Projects/LaBlog/"
-PANDOC_PATH = "/usr/local/bin/pandoc"
 HTML_FILE = LABLOG_DIRECTORY + '/lablog.html'
+
+
+class HighlightRenderer(mt.Renderer):
+
+    def block_code(self, code, lang):
+        if not lang:
+            return '\n<pre><code>%s</code></pre>\n' % \
+                mt.escape(code)
+        else:
+            preCode = '\n<div class="sourceCode"><pre class="sourceCode">'
+            postCode = '</pre></div>\n'
+            code = '<code class="sourceCode {}">{}</code>'.format(
+                lang, mt.escape(code))
+            return preCode + code + postCode
 
 
 def html_contents():
@@ -29,15 +43,19 @@ SOUP_CONTENTS = BeautifulSoup(html_contents(), 'html.parser')
 
 
 def compile_mds_in_lablog():
+    renderer = HighlightRenderer()
+    mdCompiler = mt.Markdown(renderer=renderer)
+
     markdownFiles = glob(LABLOG_DIRECTORY+"/*.md")
 
-    results = Popen(
-        [PANDOC_PATH, '--from', 'markdown_github',
-         "-o", HTML_FILE] + markdownFiles,
-        stdout=PIPE).communicate()[0]
+    contents = ""
+    for mdFile in markdownFiles:
+        with open(mdFile) as f:
+            contents = contents + '\n' + f.read()
+    htmlContents = mdCompiler(contents)
     global SOUP_CONTENTS
-    SOUP_CONTENTS = BeautifulSoup(html_contents(), 'html.parser')
-    return results
+    SOUP_CONTENTS = BeautifulSoup(htmlContents, 'html.parser')
+    return SOUP_CONTENTS
 
 
 def makeEntryHeader(headr, tags, entryString):
