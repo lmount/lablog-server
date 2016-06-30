@@ -12,8 +12,10 @@ from bs4 import BeautifulSoup, Comment
 import mistune as mt
 
 
-LABLOG_DIRECTORY = "/Users/lmount/Dropbox/Projects/LaBlog/"
-MARKDOWN_DIRECTORIES = [LABLOG_DIRECTORY]
+LABLOG_DIRECTORY = "/Users/lmount/Dropbox/Projects/LaBlog/*.md"
+TLDR_DIRECTORY = """/Users/lmount/Dropbox/Projects/services/"""\
+    """LaBlog_search/tldr/pages/*/*.md"""
+MARKDOWN_DIRECTORIES = [LABLOG_DIRECTORY, TLDR_DIRECTORY]
 ENTRIES = []
 
 
@@ -72,7 +74,7 @@ def compile_mds_in_lablog():
 
     markdownFiles = []
     for markdownDir in MARKDOWN_DIRECTORIES:
-        markdownFiles += glob(markdownDir+"/*.md")
+        markdownFiles += glob(markdownDir)
 
     contents = ""
     for mdFile in markdownFiles:
