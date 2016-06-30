@@ -62,18 +62,16 @@ def search_for_keyword(keys):
     entries = []
     for c in comments:
         entries += ["<p/>"]
-        headr = c.parent.text
-        for p in c.parents:
-            if p.name in ['li']:
-                entries += [str(p)]
-                break
-            elif p.name in ['h1', 'h2', 'h3']:
+        headr = ""
+        for p in c.previousSiblingGenerator():
+            if p.name == 'h1':
                 # Find next header
                 headr = p.text
+                print("search_for_keyword:" + headr,
+                      file=sys.stderr)
                 ret = ""
                 for ns in p.nextSiblingGenerator():
-                    if str(ns.name)[0] == 'h' and \
-                       str(ns.name)[1] <= str(p.name)[1]:
+                    if str(ns.name) == 'h1':
                         break
                     else:
                         ret = ret + str(ns)
