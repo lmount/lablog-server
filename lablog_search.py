@@ -14,7 +14,7 @@ import mistune as mt
 
 
 LABLOG_DIRECTORY = "/Users/lmount/Dropbox/Projects/LaBlog/"
-HTML_FILE = LABLOG_DIRECTORY + '/lablog.html'
+SOUP_CONTENTS = BeautifulSoup("", 'html.parser')
 
 
 class HighlightRenderer(mt.Renderer):
@@ -29,17 +29,6 @@ class HighlightRenderer(mt.Renderer):
             code = '<code class="sourceCode {}">{}</code>'.format(
                 lang, mt.escape(code))
             return preCode + code + postCode
-
-
-def html_contents():
-    try:
-        with open(HTML_FILE) as x:
-            ret = x.read()
-    except IOError:
-        ret = ""
-    return ret
-
-SOUP_CONTENTS = BeautifulSoup(html_contents(), 'html.parser')
 
 
 def compile_mds_in_lablog():

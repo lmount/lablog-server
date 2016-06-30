@@ -14,7 +14,7 @@ app.config['SECRET_KEY'] = 'F34TF$($e34D'
 
 def search_source_code(key):
     results = "<br\><br\>".join(labs.search_for_keyword(key))
-    return unicode(results)
+    return unicode(results, "utf8")
 
 
 @app.route('/')
@@ -55,4 +55,5 @@ def rebuild():
 
 
 if __name__ == '__main__':
+    labs.compile_mds_in_lablog()
     app.run(debug=True, port=5001)
