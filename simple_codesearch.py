@@ -49,8 +49,11 @@ def signup():
 @app.route('/rebuild', methods=['POST'])
 def rebuild():
     labs.compile_mds_in_lablog()
-    return render_template('index.html', message="Database rebuild." +
-                           session['message'], query=session['query'])
+    if 'message' in session and 'query' in session:
+        return render_template('index.html', message="Database rebuild." +
+                               session['message'], query=session['query'])
+    else:
+        return redirect('/')
 
 
 if __name__ == '__main__':
