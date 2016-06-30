@@ -7,7 +7,6 @@ Searches the list of markdown files for entries.
 """
 from __future__ import print_function  # In python 2.7
 import sys
-from subprocess import Popen, PIPE
 from glob import glob
 from bs4 import BeautifulSoup, Comment
 import mistune as mt

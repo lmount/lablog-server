@@ -3,7 +3,6 @@ from __future__ import print_function  # In python 2.7
 import sys
 from flask import Flask, render_template, request, \
     redirect, url_for, abort, session, Markup, jsonify
-from subprocess import Popen, PIPE
 import lablog_search as labs
 import urllib
 
