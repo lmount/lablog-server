@@ -13,15 +13,19 @@ import mistune as mt
 
 
 LABLOG_DIRECTORY = "/Users/lmount/Dropbox/Projects/LaBlog/"
-SOUP_CONTENTS = BeautifulSoup("", 'html.parser')
+MARKDOWN_DIRECTORIES = [LABLOG_DIRECTORY]
+ENTRIES = []
 
 
 class HighlightRenderer(mt.Renderer):
 
     def block_code(self, code, lang):
+        preCode = '\n<div class="sourceCode"><pre class="sourceCode">'
+        postCode = '</pre></div>\n'
         if not lang:
-            return '\n<pre><code>%s</code></pre>\n' % \
-                mt.escape(code)
+            code = '<code class="sourceCode">{}</code>'.format(
+                mt.escape(code))
+            return preCode + code + postCode
         else:
             preCode = '\n<div class="sourceCode"><pre class="sourceCode">'
             postCode = '</pre></div>\n'
@@ -30,23 +34,7 @@ class HighlightRenderer(mt.Renderer):
             return preCode + code + postCode
 
 
-def compile_mds_in_lablog():
-    renderer = HighlightRenderer()
-    mdCompiler = mt.Markdown(renderer=renderer)
-
-    markdownFiles = glob(LABLOG_DIRECTORY+"/*.md")
-
-    contents = ""
-    for mdFile in markdownFiles:
-        with open(mdFile) as f:
-            contents = contents + '\n' + f.read()
-    htmlContents = mdCompiler(contents)
-    global SOUP_CONTENTS
-    SOUP_CONTENTS = BeautifulSoup(htmlContents, 'html.parser')
-    return SOUP_CONTENTS
-
-
-def makeEntryHeader(headr, tags, entryString):
+def make_entry_header(headr, tags, entryString):
     return """<div class="panel panel-default">"""\
         """<div class="panel-heading"><h3>{}</h3><code>{}</code></div>"""\
         """<div class="panel-body">"""\
@@ -54,36 +42,62 @@ def makeEntryHeader(headr, tags, entryString):
             headr, tags, entryString)
 
 
-def search_for_keyword(keys):
-    comments = SOUP_CONTENTS.findAll(text=lambda t: isinstance(t, Comment))
-    keywords = keys.split()
-    for key in keywords:
-        comments = filter(lambda c: key.lower() in str(c).lower(), comments)
-    entries = []
-    for c in comments:
-        entries += ["<p/>"]
-        headr = ""
-        for p in c.previousSiblingGenerator():
-            if p.name == 'h1':
-                # Find next header
-                headr = p.text
-                print("search_for_keyword:" + headr,
-                      file=sys.stderr)
-                ret = ""
-                for ns in p.nextSiblingGenerator():
-                    if str(ns.name) == 'h1':
-                        break
-                    else:
-                        ret = ret + str(ns)
-                entries += [str(ret)]
+def create_entries(soup):
+    # Split all entries by "h1" headers
+    h1tags = soup.find_all('h1')
+    h1entries = []
+    for h1 in h1tags:
+        h1entry = dict(headr=h1.text, tags="")
+        text = ""
+        for ns in h1.nextSiblingGenerator():
+            if str(ns.name) == 'h1':
                 break
             else:
-                print("search_for_keyword:: Could not find parent",
-                      file=sys.stderr)
-        entries[-1] = makeEntryHeader(headr, c, entries[-1])
+                if not isinstance(ns, Comment):
+                    text = text + str(ns)
+                else:
+                    h1entry['tags'] = h1entry.get('comment', "") + str(ns)
+        h1entry['text'] = text
+        h1entries += [h1entry]
+    # Create entries, ready to be displayed
+    for h1entry in h1entries:
+        h1entry['text'] = make_entry_header(
+            h1entry['headr'], h1entry['tags'], h1entry['text'])
+    return h1entries
+
+
+def compile_mds_in_lablog():
+    renderer = HighlightRenderer()
+    mdCompiler = mt.Markdown(renderer=renderer)
+
+    markdownFiles = []
+    for markdownDir in MARKDOWN_DIRECTORIES:
+        markdownFiles += glob(markdownDir+"/*.md")
+
+    contents = ""
+    for mdFile in markdownFiles:
+        with open(mdFile) as f:
+            contents = contents + '\n' + f.read()
+    htmlContents = mdCompiler(contents)
+    soup = BeautifulSoup(htmlContents, 'html.parser')
+    global ENTRIES
+    ENTRIES = create_entries(soup)
+    return
+
+
+def search_for_keyword(keys):
+    keywords = keys.split()
+
+    def has_key(entry):
+        isInHeadr = (key.lower() in entry['headr'].lower())
+        isInTags = (key.lower() in entry['tags'].lower())
+        return isInHeadr or isInTags
+    entries = ENTRIES
+    for key in keywords:
+        entries = filter(has_key, entries)
+    entries = map(lambda x: x['text'], entries)
     return entries
 
 
 if __name__ == '__main__':
     compile_mds_in_lablog()
-    print("Made html from markdown's:", HTML_FILE)
