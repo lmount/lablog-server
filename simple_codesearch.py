@@ -49,9 +49,9 @@ def signup():
 @app.route('/rebuild', methods=['POST'])
 def rebuild():
     labs.compile_mds_in_lablog()
-    if 'message' in session and 'query' in session:
-        return render_template('index.html', message="Database rebuild." +
-                               session['message'], query=session['query'])
+    formData = {"q": session.get('query', "")}
+    if formData['q'] != "":
+        return redirect('/?' + urllib.urlencode(formData))
     else:
         return redirect('/')
 

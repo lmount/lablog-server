@@ -15,7 +15,8 @@ import mistune as mt
 LABLOG_DIRECTORY = "/Users/lmount/Dropbox/Projects/LaBlog/*.md"
 TLDR_DIRECTORY = """/Users/lmount/Dropbox/Projects/services/"""\
     """LaBlog_search/tldr/pages/*/*.md"""
-MARKDOWN_DIRECTORIES = [LABLOG_DIRECTORY, TLDR_DIRECTORY]
+EAL_DIRECTORY = "/Users/lmount/EAL_S02/mier/md_notes/*.md"
+MARKDOWN_DIRECTORIES = [TLDR_DIRECTORY, EAL_DIRECTORY, LABLOG_DIRECTORY]
 ENTRIES = []
 
 
@@ -29,8 +30,6 @@ class HighlightRenderer(mt.Renderer):
                 mt.escape(code))
             return preCode + code + postCode
         else:
-            preCode = '\n<div class="sourceCode"><pre class="sourceCode">'
-            postCode = '</pre></div>\n'
             code = '<code class="sourceCode {}">{}</code>'.format(
                 lang, mt.escape(code))
             return preCode + code + postCode
@@ -84,6 +83,7 @@ def compile_mds_in_lablog():
     soup = BeautifulSoup(htmlContents, 'html.parser')
     global ENTRIES
     ENTRIES = create_entries(soup)
+    ENTRIES = ENTRIES[::-1]  # reverse chronological
     return
 
 
