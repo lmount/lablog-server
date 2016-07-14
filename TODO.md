@@ -8,7 +8,7 @@
 * Voting system
 * Paginate
 * Compute hash of content (.strip())
-
+* Live update
 
 ## Use classes for parsing 
 
