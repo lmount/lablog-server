@@ -27,7 +27,6 @@ ENTRIES = []
 
 
 def compile_mds_in_lablog():
-
     global ENTRIES
     ENTRIES = []
     for (markdownMask, reader) in MARKDOWN_DB:

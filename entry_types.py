@@ -95,7 +95,7 @@ class TLDRCodeRenderer(SimpleMarkdownCodeRenderer):
 
     def block_quote(self, text):
         comment = text.strip().replace("<p>", "").replace("</p>", "")
-        ret = '<!-- ' + comment + ' -->'
+        ret = '<!-- tldr: ' + comment + ' -->'
         # print ret
         # return ""  # unicode(ret, 'utf-8')
         return ret  # unicode(ret, 'utf-8')
