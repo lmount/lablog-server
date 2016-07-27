@@ -19,6 +19,7 @@
     </form>
     <form method="post" action="{{ url_for('rebuild') }}">
         <button type="submit" class="btn btn-default " type="button">Rebuild DB</button>
+        <span id=numberOfEntries>{{ numberOfEntries | safe}}</span>
     </form>
     <p id=message>
         {{ message | safe}}

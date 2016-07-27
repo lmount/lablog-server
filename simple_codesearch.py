@@ -12,8 +12,18 @@ app.config['SECRET_KEY'] = 'F34TF$($e34D'
 
 
 def search_source_code(key):
-    results = "<br\><br\>".join(labs.search_for_keyword(key))
-    return unicode(results, "utf8")
+    results = {}
+    messages = labs.search_for_keyword(key)
+    results['query'] = key
+    results['message'] = unicode("<br\><br\>".join(messages), "utf8")
+    numberOfEntries = len(messages)
+    if numberOfEntries == 0:
+        results['numberOfEntries'] = "No entries found"
+    elif numberOfEntries == 1:
+        results['numberOfEntries'] = "1 entry found"
+    else:
+        results['numberOfEntries'] = "{} entries found".format(numberOfEntries)
+    return results
 
 
 @app.route('/')
@@ -24,21 +34,20 @@ def home():
     if query is None:
         return render_template('index.html')
     else:
-        message = search_source_code(query)
-        session['message'] = message
-        session['query'] = query
-        return render_template('index.html', message=message,
-                               query=query)
+        results = search_source_code(query)
+        session.update(results)
+        return render_template('index.html', **results)
 
 
 @app.route('/_stuff', methods=['GET', 'POST'])
 def stuff():
     # print(request.form['query'], file=sys.stderr)
     if len(request.form['query']) > 3:
-        session['message'] = search_source_code(request.form['query'])
+        results = search_source_code(request.form['query'])
     else:
-        session['message'] = ""
-    return jsonify(message=session['message'], query=request.form['query'])
+        results = dict(message="")
+    session.update(results)
+    return jsonify(**results)
 
 
 @app.route('/signup', methods=['POST'])
