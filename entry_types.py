@@ -10,32 +10,12 @@ from glob import glob
 from bs4 import BeautifulSoup, Comment
 
 
-def make_entry_header(headr, tags, entryString):
+def make_entry_header(entry):
     return """<div class="panel panel-default">"""\
-        """<div class="panel-heading"><h3>{}</h3><code>{}</code></div>"""\
+        """<div class="panel-heading"><h3>{headr}</h3>"""\
+        """<code>{tags}</code></div>"""\
         """<div class="panel-body scrollable">"""\
-        """{}</div></div>""".format(headr, tags, entryString)
-
-
-"""
-Simple Markdown files
------------------
-"""
-
-
-class SimpleMarkdownCodeRenderer(mt.Renderer):
-
-    def block_code(self, code, lang):
-        preCode = '\n<div class="sourceCode"><pre class="sourceCode">'
-        postCode = '</pre></div>\n'
-        if not lang:
-            code = '<code class="sourceCode">{}</code>'.format(
-                mt.escape(code))
-            return preCode + code + postCode
-        else:
-            code = '<code class="sourceCode {}">{}</code>'.format(
-                lang, mt.escape(code))
-            return preCode + code + postCode
+        """{text}</div></div>""".format(**entry)
 
 
 def split_entries_h1(soup, **kwargs):
@@ -58,9 +38,29 @@ def split_entries_h1(soup, **kwargs):
     # Create entries, ready to be displayed
     for h1entry in h1entries:
         h1entry.update(kwargs)
-        h1entry['text'] = make_entry_header(
-            h1entry['headr'], h1entry['tags'], h1entry['text'])
+        h1entry['text'] = make_entry_header(h1entry)
     return h1entries
+
+
+"""
+Simple Markdown files
+-----------------
+"""
+
+
+class SimpleMarkdownCodeRenderer(mt.Renderer):
+
+    def block_code(self, code, lang):
+        preCode = '\n<div class="sourceCode"><pre class="sourceCode">'
+        postCode = '</pre></div>\n'
+        if not lang:
+            code = '<code class="sourceCode">{}</code>'.format(
+                mt.escape(code))
+            return preCode + code + postCode
+        else:
+            code = '<code class="sourceCode {}">{}</code>'.format(
+                lang, mt.escape(code))
+            return preCode + code + postCode
 
 
 def SimpleMarkdownEntries(pathMask, **kwargs):
