@@ -14,7 +14,7 @@ from bs4 import BeautifulSoup, Comment
 def make_entry_header(entry):
     return """<div class="panel panel-default">"""\
         """<div class="panel-heading"><h3>{headr}</h3>"""\
-        """<a href=subl://{file}:>{filename}</a>"""\
+        """<a href=subl://{file}:{line}>{filename}</a>"""\
         """<code>{tags}</code>"""\
         """</div>"""\
         """<div class="panel-body scrollable">{text}</div>"""\
@@ -37,11 +37,8 @@ def split_entries_h1(soup, **kwargs):
                 else:
                     h1entry['tags'] = h1entry.get('comment', "") + ns
         h1entry['text'] = text
-        h1entries += [h1entry]
-    # Create entries, ready to be displayed
-    for h1entry in h1entries:
         h1entry.update(kwargs)
-        h1entry['text'] = make_entry_header(h1entry)
+        h1entries += [h1entry]
     return h1entries
 
 
@@ -74,13 +71,22 @@ def SimpleMarkdownEntries(pathMask, **kwargs):
     for mdFile in glob(pathMask):
         mdFilename = os.path.basename(mdFile)
         with open(mdFile) as f:
-            contents = f.read()
-            htmlContents = mdCompiler(contents)
+            mdContents = unicode(f.read(), "utf8")
+            htmlContents = mdCompiler(mdContents)
             soup = BeautifulSoup(htmlContents, 'html.parser')
-            entries += split_entries_h1(soup,
-                                        file=mdFile,
-                                        filename=mdFilename,
-                                        **kwargs)
+            tmpEntries = split_entries_h1(soup,
+                                          file=mdFile,
+                                          filename=mdFilename,
+                                          line="1",
+                                          **kwargs)
+
+            for i, entry in enumerate(tmpEntries):
+                entry['line'] = str(
+                    1 + mdContents.split(entry['headr'])[0].count('\n'))
+            entries += tmpEntries
+    # Create entries, ready to be displayed
+    for h1entry in entries:
+        h1entry['text'] = make_entry_header(h1entry)
     entries = entries[::-1]
     return entries
 
@@ -116,16 +122,19 @@ def TLDREntries(pathMask, **kwargs):
     for mdFile in glob(pathMask):
         with open(mdFile) as f:
             mdFilename = os.path.basename(mdFile)
-            contents = f.read()
-            htmlContents = mdCompiler(contents)
+            mdContents = f.read()
+            htmlContents = mdCompiler(mdContents)
             soup = BeautifulSoup(htmlContents, 'html.parser')
             try:
                 entries += split_entries_h1(soup,
                                             file=mdFile,
                                             filename=mdFilename,
+                                            line="1",
                                             **kwargs)
             except:
                 print(mdFile)
+    for h1entry in entries:
+        h1entry['text'] = make_entry_header(h1entry)
     entries = entries[::-1]
     return entries
 
