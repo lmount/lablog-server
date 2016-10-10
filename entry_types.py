@@ -5,6 +5,7 @@ Description
 
 
 """
+import os
 import mistune as mt
 from glob import glob
 from bs4 import BeautifulSoup, Comment
@@ -13,9 +14,11 @@ from bs4 import BeautifulSoup, Comment
 def make_entry_header(entry):
     return """<div class="panel panel-default">"""\
         """<div class="panel-heading"><h3>{headr}</h3>"""\
-        """<code>{tags}</code></div>"""\
-        """<div class="panel-body scrollable">"""\
-        """{text}</div></div>""".format(**entry)
+        """<a href=subl://{file}:>{filename}</a>"""\
+        """<code>{tags}</code>"""\
+        """</div>"""\
+        """<div class="panel-body scrollable">{text}</div>"""\
+        """</div>""".format(**entry)
 
 
 def split_entries_h1(soup, **kwargs):
@@ -69,11 +72,15 @@ def SimpleMarkdownEntries(pathMask, **kwargs):
 
     entries = []
     for mdFile in glob(pathMask):
+        mdFilename = os.path.basename(mdFile)
         with open(mdFile) as f:
             contents = f.read()
             htmlContents = mdCompiler(contents)
             soup = BeautifulSoup(htmlContents, 'html.parser')
-            entries += split_entries_h1(soup, file=mdFile, **kwargs)
+            entries += split_entries_h1(soup,
+                                        file=mdFile,
+                                        filename=mdFilename,
+                                        **kwargs)
     entries = entries[::-1]
     return entries
 
@@ -108,11 +115,15 @@ def TLDREntries(pathMask, **kwargs):
     entries = []
     for mdFile in glob(pathMask):
         with open(mdFile) as f:
+            mdFilename = os.path.basename(mdFile)
             contents = f.read()
             htmlContents = mdCompiler(contents)
             soup = BeautifulSoup(htmlContents, 'html.parser')
             try:
-                entries += split_entries_h1(soup, file=mdFile, **kwargs)
+                entries += split_entries_h1(soup,
+                                            file=mdFile,
+                                            filename=mdFilename,
+                                            **kwargs)
             except:
                 print(mdFile)
     entries = entries[::-1]
