@@ -137,11 +137,3 @@ def TLDREntries(pathMask, **kwargs):
         h1entry['text'] = make_entry_header(h1entry)
     entries = entries[::-1]
     return entries
-
-
-"""
-* Renderer
-* Create Entry
-"""
-
-# TLDR

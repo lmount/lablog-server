@@ -1,32 +1,24 @@
 # Add for searching
-* gists
 * ~~tldr, cheat~~
+* gists (at least public)
 
 # Functionality
 * ~~Add "Copy Source"~~
 * ~~Add syntax highlighting~~
+* ~~Open file in editor~~
+* Configuration in `config.json`
 * Voting system
 * Paginate
-* Compute hash of content (.strip())
 * Live update
+* Sessions
 
-## Use classes for parsing 
+# UI/UX
+* Better layour: http://www.layoutit.com/build
 
-* Eg. different parsers for `tldr`, `notes`, etc.
-* Probably different `class HighlightRenderer(mt.Renderer) eg:
+# Project
 
-    ```python
-        def codespan(self, code):
-            preCode = '\n<div class="sourceCode"><pre class="sourceCode">'
-            postCode = '</pre></div>\n'
-            code = '<code class="sourceCode">{}</code>'.format(
-                mt.escape(code))
-            return preCode + code + postCode
-    ```
-
-* `tldr` remove '{{', '}}'.
-
-
+* README
+* Instructions
 
 ## Show only snippets
 
