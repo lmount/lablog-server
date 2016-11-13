@@ -36,31 +36,29 @@ def home():
         return render_template('index.html')
     else:
         results = search_source_code(query)
+        results['query'] = query
         session.update(results)
         return render_template('index.html', **results)
 
 
-@app.route('/_stuff', methods=['GET', 'POST'])
-def stuff():
-    # print(request.form['query'], file=sys.stderr)
-    if len(request.form['query']) > 3:
-        results = search_source_code(request.form['query'])
-    else:
-        results = dict()
-    session.update(results)
-    return jsonify(**results)
-
-
-@app.route('/signup', methods=['POST'])
+@app.route('/', methods=['POST'])
 def signup():
     return redirect('/?' + urllib.urlencode(request.form))
+
+
+@app.route('/<query>/')
+def fwd_query(query):
+    return redirect('/?query=' + query)
 
 
 @app.route('/rebuild', methods=['POST'])
 def rebuild():
     labs.compile_mds_in_lablog()
-    formData = {"q": session.get('query', "")}
-    if formData['q'] != "":
+    query = session.get('query')
+    if query is None:
+        query = session.get('q')
+    if query != "":
+        formData = {"query": query}
         return redirect('/?' + urllib.urlencode(formData))
     else:
         return redirect('/')
