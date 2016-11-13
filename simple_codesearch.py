@@ -13,10 +13,11 @@ app.config['SECRET_KEY'] = 'F34TF$($e34D'
 
 def search_source_code(key):
     results = {}
-    messages = labs.search_for_keyword(key)
+    entries = labs.search_for_keyword(key)
     results['query'] = key
-    results['message'] = unicode("<br\><br\>".join(messages), "utf8")
-    numberOfEntries = len(messages)
+    # results['message'] = unicode("<br\><br\>".join(messages), "utf8")
+    results['entries'] = entries
+    numberOfEntries = len(entries)
     if numberOfEntries == 0:
         results['numberOfEntries'] = "No entries found"
     elif numberOfEntries == 1:
@@ -45,7 +46,7 @@ def stuff():
     if len(request.form['query']) > 3:
         results = search_source_code(request.form['query'])
     else:
-        results = dict(message="")
+        results = dict()
     session.update(results)
     return jsonify(**results)
 

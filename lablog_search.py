@@ -44,7 +44,6 @@ def search_for_keyword(keys):
     entries = ENTRIES
     for key in keywords:
         entries = filter(has_key, entries)
-    entries = map(lambda x: x['text'], entries)
     return entries
 
 

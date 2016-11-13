@@ -11,16 +11,6 @@ from glob import glob
 from bs4 import BeautifulSoup, Comment
 
 
-def make_entry_header(entry):
-    return """<div class="panel panel-default">"""\
-        """<div class="panel-heading"><h3>{headr}</h3>"""\
-        """<a href=subl://{file}:{line}>{filename}</a>"""\
-        """<code>{tags}</code>"""\
-        """</div>"""\
-        """<div class="panel-body scrollable">{text}</div>"""\
-        """</div>""".format(**entry)
-
-
 def split_entries_h1(soup, **kwargs):
     # Split all entries by "h1" headers
     h1tags = soup.find_all('h1')
@@ -38,6 +28,8 @@ def split_entries_h1(soup, **kwargs):
                     h1entry['tags'] = h1entry.get('comment', "") + ns
         h1entry['text'] = text
         h1entry.update(kwargs)
+        for key, value in h1entry.items():
+            h1entry[key] = value.decode('utf-8')
         h1entries += [h1entry]
     return h1entries
 
@@ -54,8 +46,12 @@ class SimpleMarkdownCodeRenderer(mt.Renderer):
         preCode = '\n<div class="sourceCode"><pre class="sourceCode">'
         postCode = '</pre></div>\n'
         if not lang:
-            code = '<code class="sourceCode">{}</code>'.format(
-                mt.escape(code))
+            try:  # ASCII might pose problems
+                code = '<code class="sourceCode">{}</code>'.format(
+                    mt.escape(code))
+            except:
+                code = '<code class="sourceCode">{}</code>'.format(
+                    mt.escape(code).encode('ascii', 'ignore'))
             return preCode + code + postCode
         else:
             code = '<code class="sourceCode {}">{}</code>'.format(
@@ -70,7 +66,7 @@ def SimpleMarkdownEntries(pathMask, **kwargs):
     entries = []
     for mdFile in glob(pathMask):
         mdFilename = os.path.basename(mdFile)
-        with open(mdFile) as f:
+        with open(mdFile, 'r') as f:
             mdContents = unicode(f.read(), "utf8")
             htmlContents = mdCompiler(mdContents)
             soup = BeautifulSoup(htmlContents, 'html.parser')
@@ -85,8 +81,6 @@ def SimpleMarkdownEntries(pathMask, **kwargs):
                     1 + mdContents.split(entry['headr'])[0].count('\n'))
             entries += tmpEntries
     # Create entries, ready to be displayed
-    for h1entry in entries:
-        h1entry['text'] = make_entry_header(h1entry)
     entries = entries[::-1]
     return entries
 
@@ -120,7 +114,7 @@ def TLDREntries(pathMask, **kwargs):
 
     entries = []
     for mdFile in glob(pathMask):
-        with open(mdFile) as f:
+        with open(mdFile, 'r') as f:
             mdFilename = os.path.basename(mdFile)
             mdContents = f.read()
             htmlContents = mdCompiler(mdContents)
@@ -133,7 +127,5 @@ def TLDREntries(pathMask, **kwargs):
                                             **kwargs)
             except:
                 print(mdFile)
-    for h1entry in entries:
-        h1entry['text'] = make_entry_header(h1entry)
     entries = entries[::-1]
     return entries

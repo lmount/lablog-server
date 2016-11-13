@@ -11,9 +11,11 @@
 * Paginate
 * Live update
 * Sessions
+* UTF-8
+* Render `dot`, `math` files?
 
 # UI/UX
-* Better layour: http://www.layoutit.com/build
+* Better layout: http://www.layoutit.com/build
 
 # Project
 
