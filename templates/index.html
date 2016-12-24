@@ -2,7 +2,7 @@
 {% block content %}
 <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> -->
 <h1><a href="/">Snippet Search, Live!</a> <small><a href="subl:///Users/lmount/Dropbox/Projects/LaBlog/">repo</a></small></h1>
-<form method="post" action="{{ url_for('signup') }}">
+<form method="post" action="{{ url_for('signup') }}" accept-charset="UTF-8">
     <!-- <p><label>Username:</label> <input type="text" name="username" value="{{username}}" ></p> -->
     <!-- <p><label>Query:</label> <input type="text" id=query name="query" value="{{query}}" onkeyup="update_values()" class="input-medium search-query" required> -->
     <label>Query:</label>
@@ -25,7 +25,7 @@
     {% for entry in entries %}
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h3>{{ entry["headr"] | safe }}</h3>
+            <h3>{{ entry["title"] | safe }}</h3>
             <a href=subl://{{entry["file"]}}:{{entry["line"]}}>{{ entry["filename"] | safe }}</a>
             <code>{{ entry["tags"] | safe }}</code>
         </div>

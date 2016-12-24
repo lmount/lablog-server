@@ -16,7 +16,7 @@ def split_entries_h1(soup, **kwargs):
     h1tags = soup.find_all('h1')
     h1entries = []
     for h1 in h1tags:
-        h1entry = dict(headr=h1.text, tags="")
+        h1entry = dict(title=h1.text, tags="")
         text = ""
         for ns in h1.nextSiblingGenerator():
             if str(ns.name) == 'h1':
@@ -78,7 +78,7 @@ def SimpleMarkdownEntries(pathMask, **kwargs):
 
             for i, entry in enumerate(tmpEntries):
                 entry['line'] = str(
-                    1 + mdContents.split(entry['headr'])[0].count('\n'))
+                    1 + mdContents.split(entry['title'])[0].count('\n'))
             entries += tmpEntries
     # Create entries, ready to be displayed
     entries = entries[::-1]

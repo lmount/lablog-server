@@ -12,15 +12,13 @@ from bs4 import BeautifulSoup, Comment
 import mistune as mt
 from entry_types import TLDREntries, SimpleMarkdownEntries
 
-LABLOG_DIRECTORY = "/Users/lmount/Dropbox/Projects/LaBlog/*.md"
-TLDR_DIRECTORY = """/Users/lmount/Dropbox/Projects/services/"""\
-    """LaBlog_search/tldr/pages/*/*.md"""
-EAL_DIRECTORY = "/Users/lmount/EAL_S02/mier/md_notes/*.md"
+HOME = "/Users/lmount/Dropbox/Projects/"
+LABLOG_DIRECTORY = HOME + "/LaBlog/*.md"
+TLDR_DIRECTORY = HOME + "/services/LaBlog_search/tldr/pages/*/*.md"
 
 MARKDOWN_DB = [
     (LABLOG_DIRECTORY, SimpleMarkdownEntries),
     (TLDR_DIRECTORY, TLDREntries),
-    (EAL_DIRECTORY, SimpleMarkdownEntries),
 ]
 
 ENTRIES = []
@@ -38,9 +36,9 @@ def search_for_keyword(keys):
     keywords = keys.split()
 
     def has_key(entry):
-        isInHeadr = (key.lower() in entry['headr'].lower())
+        isInTitle = (key.lower() in entry['title'].lower())
         isInTags = (key.lower() in entry['tags'].lower())
-        return isInHeadr or isInTags
+        return isInTitle or isInTags
     entries = ENTRIES
     for key in keywords:
         entries = filter(has_key, entries)

@@ -13,6 +13,7 @@
 * Sessions
 * UTF-8
 * Render `dot`, `math` files?
+* Highlight text: [js snippet](http://stackoverflow.com/questions/8644428/how-to-highlight-text-using-javascript)
 
 # UI/UX
 * Better layout: http://www.layoutit.com/build
