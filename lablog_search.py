@@ -36,19 +36,19 @@ def search_for_keyword(keys):
     def has_key(entry):
         """For example: key='tag:python title:string' """
         k = key.split(':')
+        isInTitle = False
+        isInTags = False
+        isInText = False
         if len(k) != 2:
             isInTitle = (key.lower() in entry['title'].lower())
             isInTags = (key.lower() in entry['tags'].lower())
         elif k[0].lower() == 'title':
             isInTitle = (k[1].lower() in entry['title'].lower())
-            isInTags = False
         elif k[0].lower() == 'tag':
-            isInTitle = False
             isInTags = (k[1].lower() in entry['tags'].lower())
-        else:
-            isInTitle = (key.lower() in entry['title'].lower())
-            isInTags = (key.lower() in entry['tags'].lower())
-        return isInTitle or isInTags
+        elif k[0].lower() == 'text':
+            isInText = (k[1].lower() in entry['text'].lower())
+        return isInTitle or isInTags or isInText
     entries = ENTRIES
     for key in keywords:
         entries = filter(has_key, entries)
