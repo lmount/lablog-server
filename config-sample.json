@@ -1,12 +1,16 @@
-[
-  {
-    "path": "/Users/lmount/Dropbox/Projects/LaBlog/*.md",
-    "type": "markdown",
-    "name": "LabLog"
-  },
-  {
-    "path": "/Users/lmount/Dropbox/Projects/services/LaBlog_search/tldr/pages/*/*.md",
-    "type": "tldr",
-    "name": "tldr-pages"
-  }
-]
+{
+  "repositories": [
+    {
+      "name": "LabLog",
+      "path": "/Users/lmount/Dropbox/Projects/LaBlog/*.md",
+      "type": "markdown",
+      "active": true
+    },
+    {
+      "name": "tldr-pages",
+      "path": "/Users/lmount/Dropbox/Projects/services/LaBlog_search/tldr/pages/*/*.md",
+      "type": "tldr",
+      "active": true
+    }
+  ]
+}

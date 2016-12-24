@@ -5,19 +5,9 @@ Searches the list of markdown files for entries.
 
 
 """
-from __future__ import print_function  # In python 2.7
-import sys
+import json
 from glob import glob
-from renderers import TLDREntries, SimpleMarkdownEntries
-
-HOME = "/Users/lmount/Dropbox/Projects/"
-LABLOG_DIRECTORY = HOME + "/LaBlog/*.md"
-TLDR_DIRECTORY = HOME + "/services/LaBlog_search/tldr/pages/*/*.md"
-
-MARKDOWN_DB = [
-    (LABLOG_DIRECTORY, SimpleMarkdownEntries),
-    (TLDR_DIRECTORY, TLDREntries),
-]
+from renderers import *
 
 ENTRIES = []
 
@@ -25,8 +15,13 @@ ENTRIES = []
 def compile_mds_in_lablog():
     global ENTRIES
     ENTRIES = []
-    for (markdownMask, reader) in MARKDOWN_DB:
-        ENTRIES += reader(markdownMask)
+    with open('config-sample.json') as f:
+        config = json.load(f)
+    for repo in config['repositories']:
+        if repo['active']:
+            renderer = type_to_renderer[repo['type']]
+            path = repo['path']
+            ENTRIES += compile_paths_to_entries(path, renderer)
     return ENTRIES
 
 
