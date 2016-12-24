@@ -41,8 +41,19 @@ class TLDRCodeRenderer(SimpleMarkdownCodeRenderer):
     preCode = '\n<div class="sourceCode"><pre class="sourceCode">'
     postCode = '</pre></div>\n'
 
+    def correct_for_non_block_code(self, text):
+        """
+        Safe removal of pre-code and post-code.
+        """
+        pos = text.find(self.preCode)
+        while pos > -1:
+            text = text[:pos] + text[pos:].replace(self.postCode, "", 1)
+            text = text[:pos] + text[pos:].replace(self.preCode, "", 1)
+            pos = text.find(self.preCode)
+        return text
+
     def list_item(self, text):
-        html_text = text.replace(self.preCode, "").replace(self.postCode, "")
+        html_text = self.correct_for_non_block_code(text)
         html_text = "<li>{}</li>".format(html_text)
         return html_text
 
@@ -53,7 +64,8 @@ class TLDRCodeRenderer(SimpleMarkdownCodeRenderer):
 
     def block_quote(self, text):
         comment = text.strip().replace("<p>", "").replace("</p>", "")
-        ret = '<!-- tldr: ' + comment + ' -->'
+        comment = self.correct_for_non_block_code(comment)
+        ret = '<!-- tldr: ' + comment + '-->'
         # print ret
         # return ""  # unicode(ret, 'utf-8')
         return ret  # unicode(ret, 'utf-8')
@@ -66,15 +78,15 @@ Type to renderer
 """
 
 
-def split_entries_h1(soup, **kwargs):
+def split_entries(soup, html_token='h1', **kwargs):
     # Split all entries by "h1" headers
-    h1tags = soup.find_all('h1')
+    h1tags = soup.find_all(html_token)
     h1entries = []
     for h1 in h1tags:
         h1entry = dict(title=h1.text, tags="")
         text = ""
         for ns in h1.nextSiblingGenerator():
-            if str(ns.name) == 'h1':
+            if str(ns.name) == html_token:
                 break
             else:
                 if not isinstance(ns, Comment):
@@ -90,7 +102,8 @@ def split_entries_h1(soup, **kwargs):
 
 
 def compile_paths_to_entries(path_mask, renderer, **kwargs):
-    markdown_compiler = mt.Markdown(renderer=renderer())
+    md_renderer = renderer()
+    markdown_compiler = mt.Markdown(renderer=md_renderer)
 
     entries = []
     for mdFile in glob(path_mask):
@@ -101,11 +114,11 @@ def compile_paths_to_entries(path_mask, renderer, **kwargs):
             htmlContents = markdown_compiler(mdContents)
             soup = BeautifulSoup(htmlContents, 'html.parser')
             try:
-                tmpEntries = split_entries_h1(soup,
-                                              file=mdFile,
-                                              filename=mdFilename,
-                                              line="1",
-                                              **kwargs)
+                tmpEntries = split_entries(soup,
+                                           file=mdFile,
+                                           filename=mdFilename,
+                                           line="1",
+                                           **kwargs)
                 for i, entry in enumerate(tmpEntries):
                     entry['line'] = str(
                         1 + mdContents.split(entry['title'])[0].count('\n'))
