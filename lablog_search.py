@@ -8,9 +8,7 @@ Searches the list of markdown files for entries.
 from __future__ import print_function  # In python 2.7
 import sys
 from glob import glob
-from bs4 import BeautifulSoup, Comment
-import mistune as mt
-from entry_types import TLDREntries, SimpleMarkdownEntries
+from renderers import TLDREntries, SimpleMarkdownEntries
 
 HOME = "/Users/lmount/Dropbox/Projects/"
 LABLOG_DIRECTORY = HOME + "/LaBlog/*.md"

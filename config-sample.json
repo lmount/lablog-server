@@ -1,0 +1,12 @@
+[
+  {
+    "path": "/Users/lmount/Dropbox/Projects/LaBlog/*.md",
+    "type": "markdown",
+    "name": "LabLog"
+  },
+  {
+    "path": "/Users/lmount/Dropbox/Projects/services/LaBlog_search/tldr/pages/*/*.md",
+    "type": "tldr",
+    "name": "tldr-pages"
+  }
+]
