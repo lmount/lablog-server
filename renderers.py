@@ -101,11 +101,9 @@ def compile_paths_to_entries(path_mask, renderer, **kwargs):
         with codecs.open(md_file, "r", encoding='utf-8', errors='ignore') as f:
             md_filename = os.path.basename(md_file)
             md_contents = f.read()
-            # md_contents = f.read()
             html_contents = markdown_compiler(md_contents)
             soup = BeautifulSoup(html_contents, 'html.parser')
-            # try:
-            if 1:
+            try:
                 tmp_entries = split_entries(soup,
                                             file=md_file,
                                             filename=md_filename,
@@ -114,10 +112,9 @@ def compile_paths_to_entries(path_mask, renderer, **kwargs):
                 for i, entry in enumerate(tmp_entries):
                     entry['line'] = str(
                         1 + md_contents.split(entry['title'])[0].count('\n'))
-            # except:
-                # print(md_file)
+            except:
+                print("In " + md_file + " occured an error.")
             entries += tmp_entries
-
     # Create entries, ready to be displayed
     entries = entries[::-1]
     return entries
