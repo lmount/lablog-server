@@ -6,6 +6,7 @@ Description
 
 """
 import os
+import codecs
 import mistune as mt
 from glob import glob
 from bs4 import BeautifulSoup, Comment
@@ -17,20 +18,13 @@ class SimpleMarkdownCodeRenderer(mt.Renderer):
     """
 
     def block_code(self, code, lang):
-        preCode = '\n<div class="sourceCode"><pre class="sourceCode">'
-        postCode = '</pre></div>\n'
+        pre_code = '\n<div class="sourceCode"><pre class="sourceCode">'
+        code = mt.escape(code)
+        post_code = '</pre></div>\n'
         if not lang:
-            try:  # ASCII might pose problems
-                html_code = '<code class="sourceCode">{}</code>'.format(
-                    mt.escape(code))
-            except:
-                html_code = '<code class="sourceCode">{}</code>'.format(
-                    mt.escape(code).encode('ascii', 'ignore'))
-            return preCode + html_code + postCode
-        else:
-            html_code = '<code class="sourceCode {}">{}</code>'.format(
-                lang, mt.escape(code))
-            return preCode + html_code + postCode
+            lang = ""
+        src = '<code class="sourceCode ' + lang + '">' + code + '</code>'
+        return pre_code + src + post_code
 
 
 class TLDRCodeRenderer(SimpleMarkdownCodeRenderer):
@@ -38,36 +32,33 @@ class TLDRCodeRenderer(SimpleMarkdownCodeRenderer):
     tldr-pages to HTML renderer
     """
 
-    preCode = '\n<div class="sourceCode"><pre class="sourceCode">'
-    postCode = '</pre></div>\n'
+    pre_code = '\n<div class="sourceCode"><pre class="sourceCode">'
+    post_code = '</pre></div>\n'
 
     def correct_for_non_block_code(self, text):
         """
         Safe removal of pre-code and post-code.
         """
-        pos = text.find(self.preCode)
+        pos = text.find(self.pre_code)
         while pos > -1:
-            text = text[:pos] + text[pos:].replace(self.postCode, "", 1)
-            text = text[:pos] + text[pos:].replace(self.preCode, "", 1)
-            pos = text.find(self.preCode)
+            text = text[:pos] + text[pos:].replace(self.post_code, "", 1)
+            text = text[:pos] + text[pos:].replace(self.pre_code, "", 1)
+            pos = text.find(self.pre_code)
         return text
 
     def list_item(self, text):
         html_text = self.correct_for_non_block_code(text)
-        html_text = "<li>{}</li>".format(html_text)
+        html_text = "<li>" + html_text + "</li>"
         return html_text
 
     def codespan(self, code):
-        html_code = '<code class="sourceCode">{}</code>'.format(
-            mt.escape(code))
-        return self.preCode + html_code + self.postCode
+        html_code = '<code class="sourceCode">' + mt.escape(code) + '</code>'
+        return self.pre_code + html_code + self.post_code
 
     def block_quote(self, text):
         comment = text.strip().replace("<p>", "").replace("</p>", "")
         comment = self.correct_for_non_block_code(comment)
         ret = '<!-- tldr: ' + comment + '-->'
-        # print ret
-        # return ""  # unicode(ret, 'utf-8')
         return ret  # unicode(ret, 'utf-8')
 
 
@@ -93,10 +84,10 @@ def split_entries(soup, html_token='h1', **kwargs):
                     text = text + str(ns)
                 else:
                     h1entry['tags'] = h1entry.get('comment', "") + ns
-        h1entry['text'] = text
+        h1entry['text'] = unicode(text, "utf-8")
         h1entry.update(kwargs)
         for key, value in h1entry.items():
-            h1entry[key] = value.decode('utf-8')
+            h1entry[key] = value
         h1entries += [h1entry]
     return h1entries
 
@@ -106,25 +97,26 @@ def compile_paths_to_entries(path_mask, renderer, **kwargs):
     markdown_compiler = mt.Markdown(renderer=md_renderer)
 
     entries = []
-    for mdFile in glob(path_mask):
-        with open(mdFile, 'r') as f:
-            mdFilename = os.path.basename(mdFile)
-            # mdContents = unicode(f.read(), "utf8")
-            mdContents = f.read()
-            htmlContents = markdown_compiler(mdContents)
-            soup = BeautifulSoup(htmlContents, 'html.parser')
-            try:
-                tmpEntries = split_entries(soup,
-                                           file=mdFile,
-                                           filename=mdFilename,
-                                           line="1",
-                                           **kwargs)
-                for i, entry in enumerate(tmpEntries):
+    for md_file in glob(path_mask):
+        with codecs.open(md_file, "r", encoding='utf-8', errors='ignore') as f:
+            md_filename = os.path.basename(md_file)
+            md_contents = f.read()
+            # md_contents = f.read()
+            html_contents = markdown_compiler(md_contents)
+            soup = BeautifulSoup(html_contents, 'html.parser')
+            # try:
+            if 1:
+                tmp_entries = split_entries(soup,
+                                            file=md_file,
+                                            filename=md_filename,
+                                            line="1",
+                                            **kwargs)
+                for i, entry in enumerate(tmp_entries):
                     entry['line'] = str(
-                        1 + mdContents.split(entry['title'])[0].count('\n'))
-            except:
-                print(mdFile)
-            entries += tmpEntries
+                        1 + md_contents.split(entry['title'])[0].count('\n'))
+            # except:
+                # print(md_file)
+            entries += tmp_entries
 
     # Create entries, ready to be displayed
     entries = entries[::-1]

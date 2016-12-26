@@ -10,6 +10,12 @@
       "name": "tldr-pages",
       "path": "/Users/lmount/Dropbox/Projects/services/LaBlog_search/tldr/pages/*/*.md",
       "type": "tldr",
+      "active": false
+    },
+    {
+      "name": "tldr-pages in one file",
+      "path": "/Users/lmount/Dropbox/Projects/services/LaBlog_search/tldr/tldr-pages.md",
+      "type": "tldr",
       "active": true
     }
   ]

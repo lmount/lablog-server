@@ -1,5 +1,10 @@
 #!/usr/bin/env python
-from __future__ import print_function  # In python 2.7
+# -*- coding: utf-8 -*-
+"""
+Description
+
+
+"""
 import sys
 from flask import Flask, render_template, request, \
     redirect, url_for, abort, session, Markup, jsonify
@@ -43,7 +48,10 @@ def home():
 
 @app.route('/', methods=['POST'])
 def signup():
-    return redirect('/?' + urllib.urlencode(request.form))
+    rqf = {}
+    for k, v in request.form.iteritems():
+        rqf[k] = v.encode("utf-8")
+    return redirect('/?' + urllib.urlencode(rqf))
 
 
 @app.route('/<query>/')
@@ -58,10 +66,11 @@ def rebuild():
     if query is None:
         query = session.get('q')
     if query != "":
-        formData = {"query": query}
-        return redirect('/?' + urllib.urlencode(formData))
+        formData = {"query": query.encode("utf-8")}
+        redirect_url = ('/?' + urllib.urlencode(formData))
     else:
-        return redirect('/')
+        redirect_url = ('/')
+    return redirect(redirect_url)
 
 
 if __name__ == '__main__':
