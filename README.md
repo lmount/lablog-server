@@ -1,6 +1,6 @@
-# LaBlog Search
+Warning: This is a draft documentation file. Follow at your own risk.
 
-**DRAFT README FILE**
+# LaBlog Search
 
 > Search your Markdown notes in the browser
 
@@ -13,7 +13,7 @@ At this moment, this project has been tested only with `python2`. Install the de
 pip install flask mistune bs4
 ```
 
-alter the file `config-sample.json` to locate your markdown files, and start the server with:
+edit the file `config-sample.json` to locate your markdown files and start the server with:
 
 ```
 python2 lablog_server.py
