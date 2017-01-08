@@ -1,3 +1,11 @@
+# Project
+
+* Proper README
+* Instructions
+* Requirements
+* Test files
+
+
 # Add for searching
 * ~~tldr, cheat~~
 * gists (at least public)
@@ -15,11 +23,6 @@
 * Render `dot`, `math` files?
 * Highlight text: [js snippet](http://stackoverflow.com/questions/8644428/how-to-highlight-text-using-javascript)
 * Better layout: http://www.layoutit.com/build
-
-# Project
-
-* README
-* Instructions
 
 ## Show only snippets
 
