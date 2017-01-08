@@ -8,17 +8,17 @@ Description
 import sys
 from flask import Flask, render_template, request, \
     redirect, url_for, abort, session, Markup, jsonify
-import lablog_search as labs
+import keyword_search as kwsearch
 import urllib
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'F34TF$($e34D'
+app.config['SECRET_KEY'] = 'F34PF$($e34D'
 
 
 def search_source_code(key):
     results = {}
-    entries = labs.search_for_keyword(key)
+    entries = kwsearch.search_for_keyword(key)
     results['query'] = key
     # results['message'] = unicode("<br\><br\>".join(messages), "utf8")
     results['entries'] = entries
@@ -61,7 +61,7 @@ def fwd_query(query):
 
 @app.route('/rebuild', methods=['POST'])
 def rebuild():
-    labs.compile_mds_in_lablog()
+    kwsearch.compile_mds_in_lablog()
     query = session.get('query')
     if query is None:
         query = session.get('q')
@@ -74,5 +74,5 @@ def rebuild():
 
 
 if __name__ == '__main__':
-    labs.compile_mds_in_lablog()
+    kwsearch.compile_mds_in_lablog()
     app.run(debug=True, port=5001)

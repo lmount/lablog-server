@@ -6,16 +6,14 @@
 * ~~Add "Copy Source"~~
 * ~~Add syntax highlighting~~
 * ~~Open file in editor~~
-* Configuration in `config.json`
+* ~~Configuration in `config.json`~~
 * Voting system
 * Paginate
 * Live update
 * Sessions
-* UTF-8
+* ~~UTF-8~~
 * Render `dot`, `math` files?
 * Highlight text: [js snippet](http://stackoverflow.com/questions/8644428/how-to-highlight-text-using-javascript)
-
-# UI/UX
 * Better layout: http://www.layoutit.com/build
 
 # Project
